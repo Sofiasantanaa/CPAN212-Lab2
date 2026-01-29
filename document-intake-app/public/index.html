@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Document Intake</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <h1>Document System</h1>
+
+    <form id="docForm">
+        <input id="clientRef" placeholder="Client Ref" required>
+        <input id="docType" placeholder="Document Type" required>
+        <input id="fileName" placeholder="File Name" required>
+        <textarea id="content" placeholder="Content"></textarea>
+        <button type="submit">Add Document</button>
+    </form>
+
+
+  <h2>Documents</h2>
+  <table id="docs"></table>
+
+  <script src="app.js"></script>
+</body>
+</html>

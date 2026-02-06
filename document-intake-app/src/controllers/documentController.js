@@ -46,13 +46,6 @@ exports.updateStatus = async (req, res, id) => {
   res.end(JSON.stringify(doc))
 }
 
-exports.remove = async (req, res, id) => {
-  const body = await getBody(req)
-  const doc = await service.remove(id, body.reason)
-  res.writeHead(200, { 'Content-Type': 'application/json' })
-  res.end(JSON.stringify(doc))
-}
-
 exports.getContent = async (req, res, id) => {
   const content = await service.getContent(id)
   res.writeHead(200, { 'Content-Type': 'application/json' })

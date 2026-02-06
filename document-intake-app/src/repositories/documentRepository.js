@@ -31,3 +31,10 @@ exports.update = async (id, updated) => {
   docs[index] = updated
   await writeDB(docs)
 }
+
+exports.delete = async id => {
+  const docs = await readDB()
+  const filtered = docs.filter(d => d.id !== id)
+  await writeDB(filtered)
+}
+

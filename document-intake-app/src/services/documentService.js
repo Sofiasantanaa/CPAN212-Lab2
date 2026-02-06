@@ -15,7 +15,7 @@ const VALID_TRANSITIONS = {
   REJECTED: []
 }
 
-// ---------- CREATE DOCUMENT ----------
+//CREATE DOCUMENT 
 exports.create = async data => {
   const id = randomUUID()
   await fs.mkdir(CONTENT_DIR, { recursive: true })
@@ -39,18 +39,18 @@ exports.create = async data => {
   return document
 }
 
-// ---------- READ ----------
+//  READ 
 exports.getAll = async () => repo.getAll()
 
 exports.getOne = async id => repo.getOne(id)
 
-// ---------- READ CONTENT ----------
+// READ CONTENT 
 exports.getContent = async id => {
   const doc = await repo.getOne(id)
   return fs.readFile(doc.contentPath, 'utf-8')
 }
 
-// ---------- UPDATE ----------
+// UPDATE 
 exports.update = async (id, updates) => {
   const doc = await repo.getOne(id)
   if (doc.status === 'PROCESSED') {
@@ -63,7 +63,7 @@ exports.update = async (id, updates) => {
   return updated
 }
 
-// ---------- UPDATE STATUS ----------
+// UPDATE STATUS
 exports.updateStatus = async (id, newStatus) => {
   const doc = await repo.getOne(id)
 
@@ -77,17 +77,30 @@ exports.updateStatus = async (id, newStatus) => {
   return doc
 }
 
-// ---------- DELETE (LOGICAL) ----------
-exports.remove = async (id, reason) => {
+// DELETE (LOGICAL) 
+exports.remove = async (id) => {
   const doc = await repo.getOne(id)
-  doc.status = 'REJECTED'
-  doc.rejectionReason = reason ?? 'No reason provided'
-  await repo.update(id, doc)
-  await logger.log(`Document rejected: ${id}`)
-  return doc
+
+  if (!doc) {
+    throw new Error('Document not found')
+  }
+
+  if (doc.status !== 'REJECTED') {
+    throw new Error('Only REJECTED documents can be permanently deleted')
+  }
+
+  // delete content file
+  await fs.unlink(doc.contentPath)
+
+  // remove metadata
+  await repo.delete(id)
+
+  await logger.log(`Document permanently deleted: ${id}`)
+
+  return { message: 'Document deleted successfully' }
 }
 
-// ---------- DAILY EXPORT ----------
+// DAILY EXPORT 
 exports.dailyExport = async () => {
   await new Promise(resolve => setTimeout(resolve, 3000)) // async delay
 
